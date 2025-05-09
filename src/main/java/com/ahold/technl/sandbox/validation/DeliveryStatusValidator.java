@@ -15,7 +15,7 @@ public class DeliveryStatusValidator implements ConstraintValidator<ValidDeliver
 
     @Override
     public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
-        if (value == null) return true;
+        if (value == null) return false;
         return Arrays.stream(enumClass.getEnumConstants())
                 .anyMatch(e -> e.name().equals(value.name()));
     }

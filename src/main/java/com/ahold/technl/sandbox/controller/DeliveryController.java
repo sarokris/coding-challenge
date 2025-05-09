@@ -1,10 +1,10 @@
 package com.ahold.technl.sandbox.controller;
 
+import com.ahold.technl.sandbox.dto.DeliveryInvoiceRecord;
+import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.dto.BusinessSummary;
 import com.ahold.technl.sandbox.dto.DeliveryIdRecord;
-import com.ahold.technl.sandbox.dto.DeliveryInvoiceRecord;
 import com.ahold.technl.sandbox.dto.DeliveryRecord;
-import com.ahold.technl.sandbox.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class DeliveryController {
     }
 
     @PostMapping("/invoice")
-    List<DeliveryInvoiceRecord> sendInvoice(List<DeliveryIdRecord> deliveryIdRecords){
+    public List<DeliveryInvoiceRecord> sendInvoice(@RequestBody List<DeliveryIdRecord> deliveryIdRecords){
         return null;
     }
 
