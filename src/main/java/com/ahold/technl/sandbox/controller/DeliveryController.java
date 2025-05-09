@@ -39,9 +39,8 @@ public class DeliveryController {
     }
 
     @PostMapping("/invoice")
-    public List<DeliveryInvoiceRecord> sendInvoice(@RequestBody List<DeliveryIdRecord> deliveryIdRecords){
-
-        return null;
+    public List<DeliveryInvoiceRecord> sendInvoice(@RequestBody DeliveryIdRecord deliveryIdRecords){
+        return deliveryService.sendInvoice(deliveryIdRecords);
     }
 
 
