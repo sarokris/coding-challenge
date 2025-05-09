@@ -38,15 +38,15 @@ class DeliveryControllerTest {
         String requestBody = objectMapper.writeValueAsString(deliveryRecord);
         mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.vehicleId").value("AHV-589"))
-                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+                .andExpect(status().isBadRequest());
 
     }
 
     private static Stream<Arguments> getInvalidStatusRequest(){
        return Stream.of(Arguments.of(MockMvcRequestBuilders.post("/deliveries")
-               ,new DeliveryRecord(null,"101","Street-abc",null,null,null))
+               ,new DeliveryRecord(null,"101","Street-abc",null,null,null)),
+               Arguments.of(MockMvcRequestBuilders.post("/deliveries")
+                       ,new DeliveryRecord(null,"101","Street-abc","test",null,null))
        );
     }
 

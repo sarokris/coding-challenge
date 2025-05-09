@@ -7,9 +7,9 @@ import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.dto.BusinessSummary;
 import com.ahold.technl.sandbox.dto.DeliveryIdRecord;
 import com.ahold.technl.sandbox.dto.DeliveryRecord;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +28,7 @@ public class DeliveryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DeliveryRecord createDelivery(@Valid @RequestBody DeliveryRecord record){
+    public DeliveryRecord createDelivery(@Validated @RequestBody DeliveryRecord record){
         if (DeliveryStatus.IN_PROGRESS.equals(record.status()) && record.finishedAt() != null) {
             throw new DeliveryException(HttpStatus.BAD_REQUEST.value(), "finishedAt should be null for IN_PROGRESS deliveries");
         } else if (DeliveryStatus.DELIVERED.equals(record.status()) && record.finishedAt() == null) {
