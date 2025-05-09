@@ -1,6 +1,8 @@
 package com.ahold.technl.sandbox.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -11,7 +13,8 @@ import java.util.UUID;
 public class Delivery {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     private String vehicleId;
     private String address;
     private String startedAt;

@@ -1,6 +1,8 @@
 package com.ahold.technl.sandbox.controller;
 
 import com.ahold.technl.sandbox.dto.DeliveryInvoiceRecord;
+import com.ahold.technl.sandbox.dto.DeliveryStatus;
+import com.ahold.technl.sandbox.exception.DeliveryException;
 import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.dto.BusinessSummary;
 import com.ahold.technl.sandbox.dto.DeliveryIdRecord;
@@ -27,6 +29,9 @@ public class DeliveryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public DeliveryRecord createDelivery(@Valid @RequestBody DeliveryRecord record){
+        if(DeliveryStatus.IN_PROGRESS.equals(record.status()) && record.finishedAt() != null){
+            throw new DeliveryException(HttpStatus.BAD_REQUEST.value(), "finishedAt should be null for IN_PROGRESS deliveries");
+        }
        return deliveryService.createDelivery(record);
     }
 
