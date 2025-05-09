@@ -16,8 +16,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClient;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +65,38 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public BusinessSummary getBusinessSummary() {
-        return null;
+        ZoneId amsterdamZone = ZoneId.of("Europe/Amsterdam");
+
+        OffsetDateTime startOfToday = OffsetDateTime.now(amsterdamZone)
+                .toLocalDate().atStartOfDay(amsterdamZone).toOffsetDateTime();
+
+        OffsetDateTime startOfYesterday = startOfToday.minusDays(1);
+        OffsetDateTime endOfYesterday = startOfToday.minusNanos(1);
+
+        List<Delivery> yesterdaysDeliveries = deliveryRepo.findAllByStartedAtBetween(startOfYesterday,endOfYesterday);
+
+        if(CollectionUtils.isEmpty(yesterdaysDeliveries))
+            throw new DeliveryException(HttpStatus.NOT_FOUND.value(), "No delivery on yesterday");
+
+        List<Long> timeDifferences = new ArrayList<>();
+        yesterdaysDeliveries.sort(Comparator.comparing(Delivery::getStartedAt));
+
+        for (int i = 1; i < yesterdaysDeliveries.size(); i++) {
+            OffsetDateTime previousStartTime = yesterdaysDeliveries.get(i - 1).getStartedAt();
+            OffsetDateTime currentStartTime = yesterdaysDeliveries.get(i).getStartedAt();
+
+            long difference = ChronoUnit.MINUTES.between(previousStartTime, currentStartTime);
+            timeDifferences.add(difference);
+        }
+
+        // Calculate average time difference
+        double averageTimeDifference = timeDifferences.stream()
+                .mapToLong(Long::longValue)
+                .average()
+                .orElse(0);
+
+        return new BusinessSummary(yesterdaysDeliveries.size(), (long) averageTimeDifference);
+
     }
 
     private DeliveryInvoiceRecord invokeInvoiceApi(Delivery delivery){
