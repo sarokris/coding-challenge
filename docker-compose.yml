@@ -1,4 +1,4 @@
-version: '3'
+#version: '3'
 
 services:
   mock-api:
@@ -10,13 +10,31 @@ services:
     entrypoint: ["/docker-entrypoint.sh", "--port=8000"]
   #database:
     #
+  db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: deliverydb
+      POSTGRES_USER: uname
+      POSTGRES_PASSWORD: pwd
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   application:
     build:
       context: .
       dockerfile: Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/deliverydb
+      - SPRING_DATASOURCE_USERNAME=uname
+      - SPRING_DATASOURCE_PASSWORD=pwd
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8080:8080"
     depends_on:
       - mock-api
+
+volumes:
+  pgdata: {}
