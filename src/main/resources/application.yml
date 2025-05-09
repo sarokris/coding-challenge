@@ -10,6 +10,8 @@ spring:
     jpa:
       hibernate:
         ddl-auto: update
+        jdbc:
+          time_zone: UTC
       show-sql: true
 
 invoice-service.url: "http://localhost:8000"

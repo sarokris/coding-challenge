@@ -29,14 +29,18 @@ public class DeliveryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public DeliveryRecord createDelivery(@Valid @RequestBody DeliveryRecord record){
-        if(DeliveryStatus.IN_PROGRESS.equals(record.status()) && record.finishedAt() != null){
+        if (DeliveryStatus.IN_PROGRESS.equals(record.status()) && record.finishedAt() != null) {
             throw new DeliveryException(HttpStatus.BAD_REQUEST.value(), "finishedAt should be null for IN_PROGRESS deliveries");
+        } else if (DeliveryStatus.DELIVERED.equals(record.status()) && record.finishedAt() == null) {
+            throw new DeliveryException(HttpStatus.BAD_REQUEST.value(), "finishedAt should not be null for DELIVERED deliveries");
         }
-       return deliveryService.createDelivery(record);
+
+        return deliveryService.createDelivery(record);
     }
 
     @PostMapping("/invoice")
     public List<DeliveryInvoiceRecord> sendInvoice(@RequestBody List<DeliveryIdRecord> deliveryIdRecords){
+
         return null;
     }
 
