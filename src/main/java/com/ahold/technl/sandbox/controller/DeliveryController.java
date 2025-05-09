@@ -7,6 +7,8 @@ import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.dto.BusinessSummary;
 import com.ahold.technl.sandbox.dto.DeliveryIdRecord;
 import com.ahold.technl.sandbox.dto.DeliveryRecord;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -22,12 +24,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/deliveries")
 @RequiredArgsConstructor
+@Tag(name="AH Deliveries")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "This API  to create the deliveries started and finished"
+    )
     public DeliveryRecord createDelivery(@Validated @RequestBody DeliveryRecord record){
         if (DeliveryStatus.IN_PROGRESS.equals(record.status()) && record.finishedAt() != null) {
             throw new DeliveryException(HttpStatus.BAD_REQUEST.value(), "finishedAt should be null for IN_PROGRESS deliveries");
@@ -39,12 +45,18 @@ public class DeliveryController {
     }
 
     @PostMapping("/invoice")
+    @Operation(
+            summary = "This API is to send Invoice for the given deliveries"
+    )
     public List<DeliveryInvoiceRecord> sendInvoice(@RequestBody DeliveryIdRecord deliveryIdRecords){
         return deliveryService.sendInvoice(deliveryIdRecords);
     }
 
 
     @GetMapping("/business-summary")
+    @Operation(
+            summary = "This API to get the delivery summary for yesterday"
+    )
     public BusinessSummary getBusinessSummary() {
         return deliveryService.getBusinessSummary();
     }
