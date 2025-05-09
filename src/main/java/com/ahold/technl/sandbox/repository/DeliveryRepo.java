@@ -7,6 +7,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface DeliveryRepo extends JpaRepository<Delivery,String> {
-    public List<Delivery> findAllByStartedAtBetween(OffsetDateTime start, OffsetDateTime end);
+    List<Delivery> findAllByStartedAtBetween(OffsetDateTime start, OffsetDateTime end);
 
 }

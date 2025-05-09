@@ -14,6 +14,7 @@ import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.util.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -25,7 +26,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -101,7 +101,15 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private DeliveryInvoiceRecord invokeInvoiceApi(Delivery delivery){
         InvoiceRequest request = new InvoiceRequest(delivery.getId(), delivery.getAddress());
-        ResponseEntity<InvoiceResponse> response = restClient.post().uri("/v1/invoices").body(request).retrieve().toEntity(InvoiceResponse.class);
+        ResponseEntity<InvoiceResponse> response = restClient.post()
+                .uri("/v1/invoices")
+                .body(request)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (req, res) -> {
+                    String responseBody = new String(res.getBody().readAllBytes());
+                    throw new DeliveryException(res.getStatusCode().value(), responseBody);
+                })
+                .toEntity(InvoiceResponse.class);
         InvoiceResponse invResp = response.getBody();
         return new DeliveryInvoiceRecord(delivery.getId(),invResp.id());
     }
