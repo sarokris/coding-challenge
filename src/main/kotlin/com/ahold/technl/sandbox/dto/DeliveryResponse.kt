@@ -4,10 +4,10 @@ import java.time.OffsetDateTime
 import java.util.*
 
 data class DeliveryResponse(
-    val id: UUID,
+    val id: String,
     val vehicleId: String,
     val address: String,
-    val startedAt: OffsetDateTime,
-    val finishedAt: OffsetDateTime?,
+    val startedAt: String,
+    val finishedAt: String?,
     val status: DeliveryStatus
 )

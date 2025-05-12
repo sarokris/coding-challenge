@@ -7,7 +7,7 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-@Table(name = "deliveries")
+@Table
 data class Delivery(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

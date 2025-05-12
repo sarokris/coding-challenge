@@ -8,7 +8,8 @@ spring:
     driver-class-name: org.postgresql.Driver
     jpa:
       hibernate:
-        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: create
         jdbc:
           time_zone: UTC
       show-sql: true
