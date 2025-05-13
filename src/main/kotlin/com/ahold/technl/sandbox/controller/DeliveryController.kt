@@ -1,8 +1,6 @@
 package com.ahold.technl.sandbox.controller
 
-import com.ahold.technl.sandbox.dto.DeliveryRequest
-import com.ahold.technl.sandbox.dto.DeliveryResponse
-import com.ahold.technl.sandbox.dto.DeliveryStatus
+import com.ahold.technl.sandbox.dto.*
 import com.ahold.technl.sandbox.exception.DeliveryException
 import com.ahold.technl.sandbox.service.DeliveryService
 import jakarta.validation.Valid
@@ -33,4 +31,11 @@ class DeliveryController(private val deliveryService: DeliveryService) {
         var response = deliveryService.createDelivery(request)
         return response
     }
+
+    @PostMapping("/invoice")
+    fun sendInvoice(@RequestBody deliveryIdRecord: DeliveryIdRecord): MutableList<DeliveryInvoiceRecord?>? {
+        return deliveryService.sendInvoice(deliveryIdRecord)
+    }
+
+
 }

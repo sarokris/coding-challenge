@@ -11,6 +11,7 @@ import java.util.*
 data class Delivery(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "UUID")
     val id: UUID? = null,
 
     @field:NotNull
@@ -26,4 +27,6 @@ data class Delivery(
 
     @Enumerated(EnumType.STRING)
     val status: DeliveryStatus
-)
+){
+    constructor() : this(null, "", "", OffsetDateTime.now(), null, DeliveryStatus.IN_PROGRESS)
+}
