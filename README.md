@@ -150,7 +150,20 @@ A mock API is exposed on port `8000` which is defined in the [docker-compose fil
 - [A docker-compose file](./docker-compose.yml) already exists that builds and runs the application. Run this to make the [mock API](#mock-api) and database (that you add yourself) available. You can use the following command `docker-compose up --build`
 
 ## To-do and considerations
-- ...
+ - Improve the request validation for Timestamp, can introduce the separate validator for that.
+ - Improve the test coverate and add Integration and End to end test cases.
+ - Implement the build breaker to fail the build if code base does not have the required test coverage.
+ - Add the code template enforces consistent coding patterns, reducing variability in code structure.
+ - Enhance the API documentation with sample success and error response
+ - Authentication & Authorization Implement Oauth2.0 for security
+ - Caching frequently accessed data and Implement the caching strategies like invalidation
+ - Implement rate limiting to prevent brute-force attacks and abuse of endpoints
+ - Implement Logging (AOP or async logging) and Auditing
+ - Separate the DB so that it can scale separately
+ - Sending Invoice can be done aysc when delivery status changes
+ - Can use read replica for summary and report related API
+ - Implement Circuit breaker when making sync api calls like Invoice API
+ - Configure the deployment manifest to deploy the application to Kubernetes (K8s).
 
 ## Sending in the assignment
 - We expect a docker compose file that we can run with `docker-compose up` which should start up a functional application at port 8080 (including dependencies like a database).
