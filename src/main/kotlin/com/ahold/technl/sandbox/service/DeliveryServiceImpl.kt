@@ -8,7 +8,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.util.CollectionUtils
 import org.springframework.web.client.RestClient
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 
 @Service
@@ -41,6 +45,44 @@ class DeliveryServiceImpl(
         return deliveries.parallelStream().map(this::invokeInvoiceApi).toList()
     }
 
+    override fun getBusinessSummary(): BusinessSummary {
+        val amsterdamZone = ZoneId.of("Europe/Amsterdam")
+
+        val startOfToday = OffsetDateTime.now(amsterdamZone)
+            .toLocalDate().atStartOfDay(amsterdamZone).toOffsetDateTime()
+
+        val startOfYesterday = startOfToday.minusDays(1)
+        val endOfYesterday = startOfToday.minusNanos(1)
+
+        val yesterdaysDeliveries: List<Delivery> =
+            deliveryRepository.findAllByStartedAtBetween(startOfYesterday, endOfYesterday)
+
+        if (CollectionUtils.isEmpty(yesterdaysDeliveries)) throw DeliveryException(
+            HttpStatus.NOT_FOUND.value(),
+            "No delivery on yesterday"
+        )
+
+        val timeDifferences: MutableList<Long> = ArrayList()
+        yesterdaysDeliveries.sortedWith(Comparator.comparing(Delivery::startedAt))
+
+        for (i in 1 until yesterdaysDeliveries.size) {
+            val previousStartTime = yesterdaysDeliveries[i - 1].startedAt
+            val currentStartTime = yesterdaysDeliveries[i].startedAt
+
+            val difference = ChronoUnit.MINUTES.between(previousStartTime, currentStartTime)
+            timeDifferences.add(difference)
+        }
+
+        // Calculate average time difference
+        val averageTimeDifference = timeDifferences.stream()
+            .mapToLong { obj: Long -> obj }
+            .average()
+            .orElse(0.0)
+
+        return BusinessSummary(yesterdaysDeliveries.size, averageTimeDifference.toLong())
+    }
+
+
     private fun invokeInvoiceApi(delivery: Delivery): DeliveryInvoiceRecord? {
         val request = InvoiceRequest(delivery.id.toString(), delivery.address)
         val response: ResponseEntity<InvoiceResponse> = restClient.post()
@@ -48,7 +90,7 @@ class DeliveryServiceImpl(
             .body(request)
             .retrieve()
             .onStatus({ obj: HttpStatusCode -> obj.isError }, { req, res ->
-                val responseBody: String = String(res.getBody().readAllBytes())
+                val responseBody = String(res.getBody().readAllBytes())
                 throw DeliveryException(res.getStatusCode().value(), responseBody)
             })
             .toEntity(InvoiceResponse::class.java)

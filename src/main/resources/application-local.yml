@@ -6,12 +6,12 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
-    jpa:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        ddl-auto: create-drop
-        jdbc:
-          time_zone: UTC
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
+      jdbc:
+        time_zone: UTC
       show-sql: true
 
 invoice-service.url: "http://localhost:8000"

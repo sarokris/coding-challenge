@@ -5,6 +5,7 @@ import com.ahold.technl.sandbox.exception.DeliveryException
 import com.ahold.technl.sandbox.service.DeliveryService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -35,6 +36,11 @@ class DeliveryController(private val deliveryService: DeliveryService) {
     @PostMapping("/invoice")
     fun sendInvoice(@RequestBody deliveryIdRecord: DeliveryIdRecord): MutableList<DeliveryInvoiceRecord?>? {
         return deliveryService.sendInvoice(deliveryIdRecord)
+    }
+
+    @GetMapping("/business-summary")
+    fun getBusinessSummar():BusinessSummary{
+        return deliveryService.getBusinessSummary()
     }
 
 
