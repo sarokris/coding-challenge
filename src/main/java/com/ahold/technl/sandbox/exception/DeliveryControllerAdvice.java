@@ -24,6 +24,12 @@ public class DeliveryControllerAdvice {
         return new ResponseEntity<>(error, resolveHttpStatus(error.errCode()));
     }
 
+    @ExceptionHandler(DeliveryNotFoundException.class)
+    public ResponseEntity<DeliveryErrorResponse> handleHolidayExceptioException(DeliveryNotFoundException ex) {
+        DeliveryErrorResponse error = new DeliveryErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(error, resolveHttpStatus(error.errCode()));
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid value provided: " + ex.getMessage());

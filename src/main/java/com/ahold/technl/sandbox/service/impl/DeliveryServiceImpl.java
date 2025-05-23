@@ -5,13 +5,12 @@ import com.ahold.technl.sandbox.dto.DeliveryIdRecord;
 import com.ahold.technl.sandbox.dto.DeliveryInvoiceRecord;
 import com.ahold.technl.sandbox.dto.DeliveryRecord;
 import com.ahold.technl.sandbox.entity.Delivery;
-import com.ahold.technl.sandbox.exception.DeliveryException;
+import com.ahold.technl.sandbox.exception.DeliveryNotFoundException;
 import com.ahold.technl.sandbox.mapper.DeliveryMapper;
 import com.ahold.technl.sandbox.repository.DeliveryRepo;
 import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -51,7 +50,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .toList();
 
         if (!missingIds.isEmpty()) {
-            throw new DeliveryException(HttpStatus.NOT_FOUND.value(), "The following delivery IDs were not found: " + missingIds);
+            throw new DeliveryNotFoundException( "The following delivery IDs were not found: " + missingIds);
         }
         return deliveries.parallelStream().map(invoiceService::invokeInvoiceApi).toList();
     }
@@ -68,7 +67,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         List<Delivery> yesterdaysDeliveries = deliveryRepo.findAllByStartedAtBetween(getStartOfYesterday(AMSTERDAM_ZONE_ID),getEndOfYesterday(AMSTERDAM_ZONE_ID));
 
         if(CollectionUtils.isEmpty(yesterdaysDeliveries))
-            throw new DeliveryException(HttpStatus.NOT_FOUND.value(), "No delivery on yesterday");
+            throw new DeliveryNotFoundException( "No delivery on yesterday");
 
         List<Long> timeDifferences = new ArrayList<>();
         yesterdaysDeliveries.sort(Comparator.comparing(Delivery::getStartedAt));
