@@ -10,7 +10,6 @@ import com.ahold.technl.sandbox.mapper.DeliveryMapper;
 import com.ahold.technl.sandbox.repository.DeliveryRepo;
 import com.ahold.technl.sandbox.service.DeliveryService;
 import com.ahold.technl.sandbox.service.InvoiceService;
-import com.ahold.technl.sandbox.util.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.ahold.technl.sandbox.util.CollectionUtil.emptyIfNull;
 import static com.ahold.technl.sandbox.util.DateUtil.AMSTERDAM_ZONE_ID;
 import static com.ahold.technl.sandbox.util.DateUtil.getEndOfYesterday;
 import static com.ahold.technl.sandbox.util.DateUtil.getStartOfYesterday;
@@ -59,7 +59,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public List<DeliveryRecord> findAll() {
         List<Delivery> allDelivery = deliveryRepo.findAll();
-        return CollectionUtil.emptyIfNull(allDelivery).stream().map(deliveryMapper::toDTO).toList();
+        return emptyIfNull(allDelivery).stream().map(deliveryMapper::toDTO).toList();
     }
 
     @Override
