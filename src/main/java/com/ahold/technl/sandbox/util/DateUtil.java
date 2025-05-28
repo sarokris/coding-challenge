@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @UtilityClass
 public class DateUtil {
@@ -22,6 +24,28 @@ public class DateUtil {
 
     public static OffsetDateTime getEndOfYesterday(ZoneId zoneId){
         return getStartOfToday(zoneId).minusNanos(1);
+    }
+
+    public static OffsetDateTime parse(String date){
+        try {
+            return OffsetDateTime.parse(date);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    public static String format(OffsetDateTime date, DateTimeFormatter formatter){
+        if(date == null) return null;
+        try {
+            DateTimeFormatter dateTimeFormatter =  formatter == null ? DateTimeFormatter.ISO_OFFSET_DATE_TIME : formatter;
+            return date.format(dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    public static String format(OffsetDateTime date){
+        return format(date,null);
     }
 
 }

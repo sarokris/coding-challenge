@@ -16,7 +16,7 @@ public class DeliveryTimeValidator implements ConstraintValidator<ValidDeliveryT
         boolean valid = true;
 
         // Validate format of startedAt
-        if (!isValidOffsetDateTime(record.startedAt())) {
+        if (record.startedAt() != null && !isValidOffsetDateTime(record.startedAt())) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("startedAt must be in ISO_OFFSET_DATE_TIME format (e.g. 2025-05-12T10:00:00+02:00)")
                     .addPropertyNode("startedAt")
